@@ -64,3 +64,28 @@ python mdm_test.py -i /path/to/image/foder -ie image_extention -b /path/to/bbox/
 ```
 
 Tested on Ubuntu 14.04 with GTX 960.
+
+# Additional mark
+* install conda & menpo
+    * Download miniconda from: [Conda](conda.pydata.org)
+```
+$cd ~/Download
+$chmod +x miniconda3.sh
+$./miniconda3.sh
+$conda craete -n menpo python
+$source activate menpo
+(menpo)$conda install -c menpo menpoproject
+```
+* Georges' Tensorflow
+
+    * Install from the source to the conda environment according to the [Tensorflow Instruction](  https://www.tensorflow.org/versions/r0.9/get_started/os_setup.html#installing-from-sources)
+    
+```
+(menpo)$./configure
+(menpo)$bazel build -c opt --config=cuda //tensorflow/tools/pip_package:build_pip_package
+(menpo)$bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
+(menpo)$pip install /tmp/tensorflow_pkg/tensorflow-0.8.0-py2-none-any.whl
+```
+    
+    
+
