@@ -56,14 +56,16 @@ as we did in the paper, but this will be updated shortly.
     # Run tensorboard to visualise the results
     tensorboard --logdir==$PWD/ckpt
     
-# Updated
+# MDM_TEST
 Add an test program of MDM, which can be used by
 
 ```
-python mdm_test.py -i /path/to/image/foder -ie image_extention -b /path/to/bbox/folder -be bbox_extension -o /path/to/output/folder -m th
+python mdm_test.py -i /path/to/image/foder -ie image_extention -b /path/to/bbox/folder -be bbox_extension -o /path/to/output/folder -m theao_mdm.pb
 ```
 
 Tested on Ubuntu 14.04 with GTX 960.
+
+**The bounding box prepared is (x, y, w, h), the function _read_bbox(path)_ convert this to (y1, x1, y2, x2) that the program used.**
 
 # Additional mark
 * install conda & menpo

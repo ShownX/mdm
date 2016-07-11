@@ -5,6 +5,7 @@ import argparse
 import glob
 import os.path as op
 import numpy as np
+import matplotlib.pyplot as plt
 
 __author__ = 'ShownX'
 
@@ -40,9 +41,6 @@ if not args.im_ext:
 if not args.bb_ext:
     args.bb_ext = 'roi'
 
-if not args.model:
-    args.model = 'theano_mdm.pb'
-
 print("Image folder: %s" % args.image)
 print("Image extension: %s" % args.im_ext)
 print("Bounding box folder: %s" % args.bbox)
@@ -54,6 +52,7 @@ print("Model path is: %s" % args.model)
 def read_bbox(bbox_path):
     """
     Read bounding box from the file according to the bbox path which contains the bounding box like (x, y, w, h)
+    Then convert it to (y1, x1, y2, x2)
     Args:
         bbox_path: bounding box path
     Returns:
@@ -62,8 +61,8 @@ def read_bbox(bbox_path):
     infile = open(bbox_path, 'r')
     line = infile.readline()
     values = map(float, line.split(','))
-    # change (x, y, w, h) --> (x1, y1, x2, y2)
-    bbox = np.array([values[0], values[1], values[0] + values[2], values[1] + values[3]])
+    # change (x, y, w, h) --> (y1, x1, y2, x2)
+    bbox = np.array([values[1], values[0], values[1] + values[3], values[0] + values[2]])
     infile.close()
     return bbox
 
@@ -94,13 +93,14 @@ def write_lm(lm_path, pts):
     """
     outfile = open(lm_path, 'w+')
     for pt in pts:
-        outfile.write('%d %d\n' % (pt[0], pt[1]))
+        outfile.write('%d %d\n' % (pt[1], pt[0]))
     outfile.close()
 
 
 # glob the images from the image folder
 imgs_path = op.join(args.image, '*.'+args.im_ext)
 img_list = glob.glob(imgs_path)
+
 
 # the image to fit (rgb image of HWC) where H: height, W: weight and C
 # the number of channels (=3).
@@ -119,7 +119,10 @@ sess = tf.Session()
 
 start_time = time.time()
 
+SHOW = False
+
 for img_path in img_list:
+    print(img_path)
     img_name = op.basename(img_path)
     bbx_name = img_name.replace(args.im_ext, args.bb_ext)
     bbx_path = op.join(args.bbox, bbx_name)
@@ -128,6 +131,8 @@ for img_path in img_list:
     # Read bounding box
     if op.exists(bbx_path):
         boundingbox = read_bbox(bbx_path)
+        #im.landmarks['bb'] = mio.import_landmark_file(bbx_path)
+        #boundingbox = im.landmarks['bb'].lms.bounding_box()
         # Predict landmarks
         prediction, = sess.run(pred, feed_dict={
             # menpo stores images CHW instead of HWC that tensorflow uses
@@ -138,6 +143,12 @@ for img_path in img_list:
         # Write to the file
         pts_path = op.join(args.output, img_name.replace(args.im_ext, 'lm2'))
         write_lm(pts_path, prediction)
+        if SHOW:
+            im = plt.imread(img_path)
+            plt.axis('off')
+            plt.imshow(im)
+            plt.plot(prediction[:, 1], prediction[:, 0], 'ro')
+            plt.show()
 
 elapsed_time = time.time() - start_time
 print('The total time elapsed is: %.2f s, average time is: %.2f s/image' %(elapsed_time, elapsed_time/len(img_list)))
