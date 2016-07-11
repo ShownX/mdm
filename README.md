@@ -56,4 +56,11 @@ as we did in the paper, but this will be updated shortly.
     # Run tensorboard to visualise the results
     tensorboard --logdir==$PWD/ckpt
     
-    
+# Updated
+Add an test program of MDM, which can be used by
+
+```
+python mdm_test.py -i /path/to/image/foder -ie image_extention -b /path/to/bbox/folder -be bbox_extension -o /path/to/output/folder -m th
+```
+
+Tested on Ubuntu 14.04 with GTX 960.
