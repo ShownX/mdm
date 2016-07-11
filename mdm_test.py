@@ -52,20 +52,50 @@ print("Model path is: %s" % args.model)
 
 
 def read_bbox(bbox_path):
-    f = open(bbox_path, 'r')
-    line = f.readline()
+    """
+    Read bounding box from the file according to the bbox path which contains the bounding box like (x, y, w, h)
+    Args:
+        bbox_path: bounding box path
+    Returns:
+        bbox: bounding box
+    """
+    infile = open(bbox_path, 'r')
+    line = infile.readline()
     values = map(float, line.split(','))
     # change (x, y, w, h) --> (x1, y1, x2, y2)
     bbox = np.array([values[0], values[1], values[0] + values[2], values[1] + values[3]])
-    f.close()
+    infile.close()
+    return bbox
+
+
+def read_bbox2(bbox_path):
+    """
+    Read bounding box from the file according to the bbox path which contains the bounding box like (x1, y1, x2, y2)
+    Args:
+        bbox_path: bounding box path
+    Returns:
+        bbox: bounding box
+    """
+    infile = open(bbox_path, 'r')
+    line = infile.readline()
+    values = map(float, line.split(','))
+    # keep (x, y, w, h)
+    bbox = np.array([values[0], values[1], values[2], values[3]])
+    infile.close()
     return bbox
 
 
 def write_lm(lm_path, pts):
-    f = open(lm_path, 'w+')
+    """
+    write landmarks to the file
+    Args:
+        lm_path: the landmark file path
+        pts: prediction landmarks
+    """
+    outfile = open(lm_path, 'w+')
     for pt in pts:
-        f.write('%d %d\n' % (pt[0], pt[1]))
-    f.close()
+        outfile.write('%d %d\n' % (pt[0], pt[1]))
+    outfile.close()
 
 
 # glob the images from the image folder

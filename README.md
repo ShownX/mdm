@@ -1,4 +1,4 @@
-# MDM
+# MDM (Mnemonic Descent Method)
 
 A Tensorflow implementation of the Mnemonic Descent Method.
 
